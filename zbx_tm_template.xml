@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.2</version>
+    <date>2025-12-29T10:42:03Z</date>
+    <groups>
+        <group>
+            <name>Virtual machines</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Azure Traffic Manager</template>
+            <name>Template Azure Traffic Manager</name>
+            <groups>
+                <group>
+                    <name>Virtual machines</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <name>Traffic Manager - Health Status</name>
+                    <type>DEPENDENT</type>
+                    <key>trafficmanager.healthstatus</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.data.healthStatus</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>traffic_manager_monitor.py[{$SUBSCRIPTION_ID},{$RESOURCE_GROUP},{$TM_PROFILE_NAME}]</key>
+                    </master_item>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;&quot;Available&quot;</expression>
+                            <name>Traffic Manager not Available</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Traffic Manager - Raw Data</name>
+                    <type>EXTERNAL</type>
+                    <key>traffic_manager_monitor.py[{$SUBSCRIPTION_ID},{$RESOURCE_GROUP},{$TM_PROFILE_NAME}]</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$RESOURCE_GROUP}</macro>
+                </macro>
+                <macro>
+                    <macro>{$SUBSCRIPTION_ID}</macro>
+                </macro>
+                <macro>
+                    <macro>{$TM_PROFILE_NAME}</macro>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>

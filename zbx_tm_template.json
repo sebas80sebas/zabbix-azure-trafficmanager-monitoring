@@ -1,0 +1,68 @@
+{
+    "zabbix_export": {
+        "version": "5.2",
+        "date": "2025-12-29T10:42:07Z",
+        "groups": [
+            {
+                "name": "Virtual machines"
+            }
+        ],
+        "templates": [
+            {
+                "template": "Template Azure Traffic Manager",
+                "name": "Template Azure Traffic Manager",
+                "groups": [
+                    {
+                        "name": "Virtual machines"
+                    }
+                ],
+                "items": [
+                    {
+                        "name": "Traffic Manager - Health Status",
+                        "type": "DEPENDENT",
+                        "key": "trafficmanager.healthstatus",
+                        "delay": "0",
+                        "trends": "0",
+                        "value_type": "CHAR",
+                        "preprocessing": [
+                            {
+                                "type": "JSONPATH",
+                                "parameters": [
+                                    "$.data.healthStatus"
+                                ]
+                            }
+                        ],
+                        "master_item": {
+                            "key": "traffic_manager_monitor.py[{$SUBSCRIPTION_ID},{$RESOURCE_GROUP},{$TM_PROFILE_NAME}]"
+                        },
+                        "triggers": [
+                            {
+                                "expression": "{last()}<>\"Available\"",
+                                "name": "Traffic Manager not Available",
+                                "priority": "HIGH"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Traffic Manager - Raw Data",
+                        "type": "EXTERNAL",
+                        "key": "traffic_manager_monitor.py[{$SUBSCRIPTION_ID},{$RESOURCE_GROUP},{$TM_PROFILE_NAME}]",
+                        "trends": "0",
+                        "value_type": "TEXT"
+                    }
+                ],
+                "macros": [
+                    {
+                        "macro": "{$RESOURCE_GROUP}"
+                    },
+                    {
+                        "macro": "{$SUBSCRIPTION_ID}"
+                    },
+                    {
+                        "macro": "{$TM_PROFILE_NAME}"
+                    }
+                ]
+            }
+        ]
+    }
+}
