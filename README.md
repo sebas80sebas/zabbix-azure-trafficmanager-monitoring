@@ -629,6 +629,14 @@ sudo -u zabbix python3 /usr/lib/zabbix/externalscripts/traffic_manager_monitor.p
 
 ### Common Issues
 
+**Issue: "Timeout while executing script"**
+
+Cause: Azure API calls usually take more than the default 3 seconds.
+
+- Solution 1 (Global): Edit /etc/zabbix/zabbix_proxy.conf (and zabbix_server.conf if necessary) and set Timeout=20. Restart the services afterwards.
+
+- Solution 2 (Zabbix 7.0+): Go to the Item configuration in the Web UI and check the "Timeout" field. Ensure it is set to a high enough value (e.g., 20s) or configured to use the "Global" setting.
+    
 **Issue: "No module named 'requests'"**
 - Solution: Install python3-requests package
 
