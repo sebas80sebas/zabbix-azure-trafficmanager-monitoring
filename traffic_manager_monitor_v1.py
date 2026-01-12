@@ -5,7 +5,7 @@ import requests
 import sys
 import json
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # ====================================================================
 # Obtain an Azure access token using Managed Identity (MSI)
@@ -96,7 +96,7 @@ def get_traffic_manager_metrics(subscription_id, resource_group, profile_name):
     url = f"https://management.azure.com{resource_id}/providers/microsoft.insights/metrics"
 
     # Define a 5-minute time window ending now (UTC)
-    end_time = datetime.utcnow()
+    end_time = datetime.now(timezone.utc)
     start_time = end_time - timedelta(minutes=5)
     timespan = "{}/{}".format(
         start_time.strftime("%Y-%m-%dT%H:%M:%SZ"),
